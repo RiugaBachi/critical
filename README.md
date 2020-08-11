@@ -2,7 +2,7 @@
 
 [![GitHub CI](https://img.shields.io/github/workflow/status/RiugaBachi/critical/CI?logo=github&style=flat-square)](https://github.com/riuga/critical/actions)
 [![Hackage](https://img.shields.io/hackage/v/critical.svg?logo=haskell&style=flat-square)](https://hackage.haskell.org/package/critical)
-[![BSD-3-Clause license](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg&style=flat-square)](LICENSE)
+[![BSD-3-Clause license](https://img.shields.io/badge/license-BSD--3--Clause-blue.svg?style=flat-square)](LICENSE)
 
 A resource management monad that prevents usage of dead resources while allowing for fine-tuned reallocation semantics.
 
