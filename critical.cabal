@@ -40,7 +40,7 @@ library
         -Wincomplete-record-updates
 
     build-depends:
-        base ^>= 4.13.0.0,
+        base >= 4.13 && < 5,
         managed ^>=1.0,
         singletons ^>=2.6,
         stm ^>=2.5
