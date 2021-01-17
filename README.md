@@ -17,11 +17,39 @@ Potential use cases of `critical` include libraries built on top of Vulkan and O
 ## Example
 
 ```hs
+import Data.IORef
 import Control.Monad.Critical
+import Control.Monad.Managed
+
+data SomeCell i a = forall t. SCell (Cell t i a)
 
 main = runCritical $ do
-  res <- cellularize @Conservative myAlloc myRelease
-  borrow res putStrLn
-  interchange res myAlloc 
-  borrow res putStrLn
+  res1 <- cellularize myAlloc myRelease
+  res2Ref <- liftIO $ newIORef (Nothing :: Maybe (SomeCell Conservative String))
+  -- ^ Let's try to obtain res2 with this IORef hack since 
+  --   runCritical specializes to () only
+  liftIO $ runCritical $ do
+    res2 <- cellularize @Conservative myAlloc myRelease
+    borrow res2 putStrLn
+    interchange res2 myAlloc 
+    borrow res2 putStrLn
+    {- borrow res1 putStrLn -} -- Bad! s0 ~ s1 cannot be proved
+    liftIO $ writeIORef res2Ref $ Just $ SCell res2
+    pure ()
+  Just (SCell res2) <- liftIO $ readIORef res2Ref
+  -- ^ Oh no! s0 ~ s1 cannot be proven due to existential quantification
+  --   of runCritical. No cellular monadic actions can be performed on
+  --   this cell from this outer monad. It is useless from this scope.
+  pure ()
+  where
+    myAlloc = pure "critical"
+    myRelease = const $ pure ()
 ```
+
+## Building
+
+This library utilizes the Cabal build system. Please consult the [official Cabal documentation](https://cabal.readthedocs.io) and the project cabal file for more information on building the library, tests, and benchmarks.
+
+## Notes
+
+Unit tests and benchmarks are for now stubs, but are on the agenda. Additionally, the library's API will remain static for the forseeable future, however internal implementations and data representations may change in pursuit of optimization.

@@ -64,7 +64,7 @@ instance InterchangeStrategy Conservative where
 
 newtype Critical s a
   = Critical { unCritical :: Managed a }
-  deriving newtype (Functor, Applicative, Monad, MonadManaged, MonadIO)
+  deriving newtype (Functor, Applicative, Monad, MonadFail, MonadManaged, MonadIO)
 
 class (forall x. MonadIO (m x)) => MonadCritical m where
   critically :: Critical s a -> m s a
